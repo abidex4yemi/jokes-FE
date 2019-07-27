@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import axios from 'axios';
 
 const initialFormState = {
-	errors: {},
-	success: {},
+	errors: null,
+	creating: false,
 	user: {
 		first_name: '',
 		last_name: '',
@@ -16,7 +16,7 @@ const initialFormState = {
 /**
  * Create a new user account
  */
-const Signup = () => {
+const Signup = props => {
 	const [state, setState] = useState(initialFormState);
 
 	const handleInputChange = (field, value) => {
@@ -32,6 +32,13 @@ const Signup = () => {
 	};
 
 	const handleSubmit = () => {
+		setState(prevState => {
+			return {
+				...prevState,
+				creating: true
+			};
+		});
+
 		const userDetails = state.user;
 
 		const url = 'https://jokes-api-backend.herokuapp.com/api/v1/auth/register';
@@ -39,15 +46,27 @@ const Signup = () => {
 		axios
 			.post(url, userDetails)
 			.then(res => {
-				console.log(res);
-			})
-			.catch(error => {
 				setState(prevState => {
 					return {
 						...prevState,
-						error
+						creating: false
 					};
 				});
+
+				if (res.data.body.user.id) {
+					props.history.push('/');
+				}
+			})
+			.catch(error => {
+				if (error.response.status === 400) {
+					setState(prevState => {
+						return {
+							...prevState,
+							errors: 'Fill all required fields',
+							creating: false
+						};
+					});
+				}
 			});
 	};
 
@@ -55,7 +74,7 @@ const Signup = () => {
 		<SignupStyled>
 			<StyledContainer>
 				<h2>Welcome to my dad jokes archive</h2>
-				<formContainer>
+				<FormContainer>
 					<form
 						onSubmit={evt => {
 							evt.preventDefault();
@@ -106,11 +125,9 @@ const Signup = () => {
 							/>
 						</InputContainer>
 
-						<div>
-							<button type="button" onClick={handleSubmit}>
-								Register
-							</button>
-						</div>
+						<StyledRegisterButton type="button" disabled={state.creating} onClick={handleSubmit}>
+							Register
+						</StyledRegisterButton>
 
 						<AlreadyHaveAccount>
 							<p>
@@ -118,7 +135,7 @@ const Signup = () => {
 							</p>
 						</AlreadyHaveAccount>
 					</form>
-				</formContainer>
+				</FormContainer>
 			</StyledContainer>
 		</SignupStyled>
 	);
@@ -126,15 +143,25 @@ const Signup = () => {
 
 export default Signup;
 
-const SignupStyled = styled.main``;
+const SignupStyled = styled.main`
+	h2 {
+		text-align: center;
+		margin: 50px 0;
+	}
+`;
 
-const formContainer = styled.div`
+const FormContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-content: center;
 
+	h3 {
+		display: block;
+	}
+
 	form {
-		width: 350px;
+		box-sizing: border-box;
+		width: 300px;
 		border-radius: 5px;
 	}
 `;
@@ -150,25 +177,63 @@ const InputContainer = styled.div`
 
 	label {
 		color: #4b4b4b;
+		display: block;
+		margin-bottom: 3px;
 	}
 
 	input {
+		box-sizing: border-box;
 		border: 1px solid #4b4b4b;
 		border-radius: 5px;
 		padding: 5px 10px;
 		color: #4b4b4b;
 		background: #fff;
+		display: block;
+		width: 100%;
+		height: 40px;
+		font-size: 16px;
+		outline: none;
+		transition: 0.2s;
+
+		&:focus {
+			border-color: #10acc2;
+		}
 	}
 `;
 
 const AlreadyHaveAccount = styled.div`
-	width: 350px;
+	box-sizing: border-box;
+	width: 300px;
 	border-radius: 5px;
-	margin: 70px 0;
-	padding: 20px;
+	border: 1px solid #4b4b4b;
+	margin: 50px 0;
 	text-align: center;
 
 	p a {
 		color: #10acc2;
+
+		&:hover {
+			color: #001c20;
+		}
+	}
+`;
+
+const StyledRegisterButton = styled.button`
+	width: 100%;
+	height: 40px;
+	box-sizing: border-box;
+	border: 0;
+	border: 1px solid #10acc2;
+	background: #10acc2;
+	color: #fff;
+	font-size: 16px;
+	font-weight: normal;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: 0.2s;
+
+	&:hover {
+		background: #001c20;
+		border-color: #001c20;
 	}
 `;
