@@ -19,34 +19,97 @@ const initialFormState = {
 const Signup = () => {
 	const [state, setState] = useState(initialFormState);
 
+	const handleInputChange = (field, value) => {
+		setState(prevState => {
+			return {
+				...prevState,
+				user: {
+					...prevState.user,
+					[field]: value
+				}
+			};
+		});
+	};
+
+	const handleSubmit = () => {
+		const userDetails = state.user;
+
+		const url = 'https://jokes-api-backend.herokuapp.com/api/v1/auth/register';
+
+		axios
+			.post(url, userDetails)
+			.then(res => {
+				console.log(res);
+			})
+			.catch(error => {
+				setState(prevState => {
+					return {
+						...prevState,
+						error
+					};
+				});
+			});
+	};
+
 	return (
 		<SignupStyled>
 			<StyledContainer>
 				<h2>Welcome to my dad jokes archive</h2>
 				<formContainer>
-					<form>
+					<form
+						onSubmit={evt => {
+							evt.preventDefault();
+							handleSubmit();
+						}}
+					>
 						<InputContainer>
 							<label htmlFor="first_name">First Name</label>
-							<input type="text" name="first_name" id="first_name" value={state.user.first_name} />
+							<input
+								type="text"
+								name="first_name"
+								id="first_name"
+								value={state.user.first_name}
+								onChange={evt => handleInputChange(evt.target.name, evt.target.value)}
+							/>
 						</InputContainer>
 
 						<InputContainer>
 							<label htmlFor="last_name">Last Name</label>
-							<input type="text" name="last_name" id="last_name" value={state.user.last_name} />
+							<input
+								type="text"
+								name="last_name"
+								id="last_name"
+								value={state.user.last_name}
+								onChange={evt => handleInputChange(evt.target.name, evt.target.value)}
+							/>
 						</InputContainer>
 
 						<InputContainer>
 							<label htmlFor="email">Email</label>
-							<input type="text" name="email" id="email" value={state.user.email} />
+							<input
+								type="text"
+								name="email"
+								id="email"
+								value={state.user.email}
+								onChange={evt => handleInputChange(evt.target.name, evt.target.value)}
+							/>
 						</InputContainer>
 
 						<InputContainer>
 							<label htmlFor="Password">Password</label>
-							<input type="password" name="password" id="password" value={state.user.password} />
+							<input
+								type="password"
+								name="password"
+								id="password"
+								value={state.user.password}
+								onChange={evt => handleInputChange(evt.target.name, evt.target.value)}
+							/>
 						</InputContainer>
 
 						<div>
-							<button type="button">Register</button>
+							<button type="button" onClick={handleSubmit}>
+								Register
+							</button>
 						</div>
 
 						<AlreadyHaveAccount>
