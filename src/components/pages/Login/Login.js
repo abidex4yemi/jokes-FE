@@ -30,7 +30,6 @@ const Login = props => {
 	};
 
 	const handleSubmit = () => {
-		console.log(state.user);
 		setState(prevState => {
 			return {
 				...prevState,

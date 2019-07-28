@@ -14,3 +14,5 @@ const Joke = props => {
 Joke.propTypes = {
 	joke: PropTypes.object.isRequired
 };
+
+export default Joke;
