@@ -8,6 +8,7 @@ const App = () => {
 			<Switch>
 				<Route exact path="/register" render={props => <Pages.Signup {...props} />} />
 				<Route exact path="/" render={props => <Pages.Login {...props} />} />
+				<Route exact path="/jokes" render={props => <Pages.Jokes {...props} />} />
 			</Switch>
 		</Router>
 	);

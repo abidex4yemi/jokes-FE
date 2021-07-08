@@ -30,7 +30,6 @@ const Login = props => {
 	};
 
 	const handleSubmit = () => {
-		console.log(state.user);
 		setState(prevState => {
 			return {
 				...prevState,
@@ -183,6 +182,8 @@ const InputContainer = styled.div`
 const DontHaveAccount = styled.div`
 	box-sizing: border-box;
 	width: 300px;
+	height: 60px;
+	line-height: 60px;
 	border-radius: 5px;
 	border: 1px solid #4b4b4b;
 	margin: 50px 0;
